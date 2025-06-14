@@ -31,7 +31,8 @@ class Invoice(Base):
     total_amount = Column(Float, nullable=False)
     total_amount_without_tax = Column(Float, nullable=False)
     total_tax = Column(Float, nullable=False)
-    invoice_status = Column(String(20), default='received')
+    invoice_status = Column(String(20), default='valid')
+    invoice_type = Column(String(20), default='Tax Invoice')
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow,
                         onupdate=datetime.utcnow)
@@ -74,6 +75,8 @@ class InvoiceManager:
             seller_info={'crId': data['sellerId']},
             seller_cr=data['sellerId'],
             buyer_id=data['buyer']['crId'],
+            invoice_type=data['invoice_type'],
+            invoice_status = data['invoice_status'],
             total_amount=total_amount,
             total_amount_without_tax=total_without_tax,
             total_tax=total_tax
@@ -121,6 +124,7 @@ def get_invoices():
         for invoice in invoices:
             invoices_list.append({
                 "invoice_id": invoice.invoice_id,
+                "invoice_type": invoice.invoice_type,
                 "buyer_info": invoice.buyer_info,
                 "seller_info": invoice.seller_info,
                 "seller_cr": invoice.seller_cr,
