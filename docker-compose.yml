@@ -1,0 +1,40 @@
+version: '3.9'
+
+services:
+  backend:
+    build:
+      context: ./backend
+    container_name: flask-backend
+    ports:
+      - "5005:5005"
+    volumes:
+      - ./backend:/app
+    networks:
+      - app-network 
+    environment:
+      - FLASK_ENV=development
+      - FLASK_RUN_PORT=5005
+      - FLASK_RUN_HOST=0.0.0.0
+
+
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: react-frontend
+    ports:
+      - "3005:3005"
+    volumes:
+      - ./frontend:/app
+    stdin_open: true
+    tty: true
+    networks:
+      - app-network 
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+      - REACT_APP_API_URL=http://backend:5005 
+
+networks:
+  app-network:
+    driver: bridge
+    
